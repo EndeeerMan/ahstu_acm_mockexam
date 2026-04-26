@@ -1,43 +1,53 @@
 #include <stdio.h>
 
-char target[6] = "AHSTU";
+const char key[6] = "AHSTU";
 
-int judge(int len,char str[]){
-    if((len-5)%2) return 0;
-    int counter = 0;
-    char buf = '\0';
-    int j = 0;
-    for(int i=0;i<=4;i++){
-        buf = target[i];
-        for(;j<=len-1;j++){
-            if(buf == str[j]){
-                counter++;
-                j++;
-                break;
-            }
+char str[200005];
+
+int judge(long long n){
+    if (n % 2 == 0) return 0;
+    int key_ptr = 0;
+
+    int counts[26] = {0};
+    for (int i = 0; i < n; i++) {
+        counts[str[i] - 'A']++;
+    }
+
+    // 3. 频率限制检查
+    for (int i = 0; i < 26; i++) {
+        int target_cnt = 0;
+        // 检查当前字母是否在 "AHSTU" 中
+        if (i == 'A'-'A' || i == 'H'-'A' || i == 'S'-'A' || i == 'T'-'A' || i == 'U'-'A') {
+            target_cnt = 1;
+        }
+        
+        // 如果某种字符多出的数量超过了可配对消除的上限
+        if (2 * (counts[i] - target_cnt) > (n - 5)) {       //某个字母数量不得多于总删除量的一半！
+            return 0;
         }
     }
-    return (counter >= 5);
+
+    for(int i=0;i<=n-1;i++){
+        if(str[i] == key[key_ptr]){
+            key_ptr += 1;
+            if(key_ptr == 5) return 1;
+        }
+    }
+    return 0;
 }
-
 int main(){
-    int cir_i;
-    scanf("%d",&cir_i);
-    int i = cir_i;
-    int result[cir_i];
-    while(cir_i--){
-        int n;
-        scanf("%d",&n);
-        char str[n+1];
+    long long T;
+    scanf("%lld",&T);
+
+    long long n;
+
+    for(long long i=1;i<=T;i++){
+        scanf("%lld",&n);
         scanf("%s",str);
-        if(judge(n,str)){
-            result[cir_i] = 1;
+        if(judge(n)){
+            printf("YES\n");
         }else{
-            result[cir_i] = 0;
+            printf("NO\n");
         }
-    }
-    for(i-=1;i>=0;i--){
-        if(result[i] == 1) printf("YES\n");
-        else printf("NO\n");
     }
 }
